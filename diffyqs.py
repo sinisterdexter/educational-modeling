@@ -1,7 +1,8 @@
 from __future__ import division
+import functools
 import csv
 
-class State(object):
+class System(object):
     def __init__(self, x0, y0, f, g):
         self.x = x0
         self.y = y0
@@ -9,8 +10,8 @@ class State(object):
         self.g = g
     
     def update(self, h):
-        self.x = self.x + f(self.x, self.y)*h
-        self.y = self.y + g(self.x, self.y)*h
+        self.x = self.x + self.f(self.x, self.y)*h
+        self.y = self.y + self.g(self.x, self.y)*h
         return (self.x, self.y)
     
     def write(self, t, h, output_path):
@@ -18,7 +19,7 @@ class State(object):
         time intervals of h, to output_path'''
 
         # Figure out how many iterations to do
-        n = t/h
+        n = int(t/h)
 
         # Write the iterations to a csv file
         with open(output_path, 'wb') as f:
@@ -27,3 +28,4 @@ class State(object):
             csv.writer(f).writerow((self.x, self.y))
             # Write the next n states:
             csv.writer(f).writerows(self.update(h) for i in xrange(n))
+
